@@ -107,7 +107,7 @@ export default function Dashboard() {
         </div>
 
         {/* Current Plan */}
-        <div className="card-custom mb-5">
+        <div className="card-custom mb-4">
           <div className="d-flex justify-content-between align-items-center flex-wrap gap-3">
             <div>
               <h5 className="text-light mb-1">Current Plan: <span style={{ color: '#6366f1' }}>{user?.plan}</span></h5>
@@ -118,6 +118,108 @@ export default function Dashboard() {
             <Link to="/pricing" className="btn btn-outline-custom btn-sm">
               {user?.plan === 'Free' ? 'Upgrade Plan' : 'Manage Plan'}
             </Link>
+          </div>
+        </div>
+
+        {/* Conversion Queue */}
+        <div className="card-custom mb-4 p-0 overflow-hidden">
+          <div className="p-4 border-bottom d-flex justify-content-between align-items-center" style={{ borderColor: 'rgba(99,102,241,0.1)' }}>
+            <h5 className="text-light mb-0">
+              <i className="fas fa-tasks me-2" style={{ color: '#f59e0b' }}></i>Conversion Queue
+            </h5>
+            <span className="badge bg-warning text-dark">
+              <i className="fas fa-spinner fa-spin me-1"></i> 2 processing
+            </span>
+          </div>
+          <div className="p-4">
+            {/* Active Job 1 */}
+            <div className="d-flex align-items-center mb-3">
+              <div className="me-3">
+                <i className="fas fa-file-powerpoint fa-lg" style={{ color: '#e84d31' }}></i>
+              </div>
+              <div className="flex-grow-1">
+                <div className="d-flex justify-content-between mb-1">
+                  <span className="text-light small fw-bold">Chemistry_Lecture_Final.pptx</span>
+                  <span className="text-secondary small">720p</span>
+                </div>
+                <div className="progress-custom">
+                  <div className="progress-bar progress-bar-striped progress-bar-animated" style={{ width: '67%' }}></div>
+                </div>
+                <div className="d-flex justify-content-between mt-1">
+                  <small className="text-secondary">Rendering slides...</small>
+                  <small className="text-secondary">67% • ~1 min left</small>
+                </div>
+              </div>
+            </div>
+            {/* Active Job 2 */}
+            <div className="d-flex align-items-center">
+              <div className="me-3">
+                <i className="fas fa-file-powerpoint fa-lg" style={{ color: '#e84d31' }}></i>
+              </div>
+              <div className="flex-grow-1">
+                <div className="d-flex justify-content-between mb-1">
+                  <span className="text-light small fw-bold">Business_Pitch_Deck.pptx</span>
+                  <span className="text-secondary small">1080p</span>
+                </div>
+                <div className="progress-custom">
+                  <div className="progress-bar progress-bar-striped progress-bar-animated" style={{ width: '23%' }}></div>
+                </div>
+                <div className="d-flex justify-content-between mt-1">
+                  <small className="text-secondary">Extracting narration...</small>
+                  <small className="text-secondary">23% • ~3 min left</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* System Status */}
+        <div className="row g-4 mb-5">
+          <div className="col-md-6">
+            <div className="card-custom h-100">
+              <h6 className="text-light mb-3">
+                <i className="fas fa-server me-2" style={{ color: '#10b981' }}></i>System Status
+              </h6>
+              <div className="d-flex justify-content-between mb-2">
+                <span className="text-secondary small">Server Status</span>
+                <span className="badge bg-success">Online</span>
+              </div>
+              <div className="d-flex justify-content-between mb-2">
+                <span className="text-secondary small">Queue Position</span>
+                <span className="text-light small">3 of 12</span>
+              </div>
+              <div className="d-flex justify-content-between mb-2">
+                <span className="text-secondary small">Avg. Processing Time</span>
+                <span className="text-light small">2.5 min</span>
+              </div>
+              <div className="d-flex justify-content-between">
+                <span className="text-secondary small">Platform Version</span>
+                <span className="text-light small">v2.1.0</span>
+              </div>
+            </div>
+          </div>
+          <div className="col-md-6">
+            <div className="card-custom h-100">
+              <h6 className="text-light mb-3">
+                <i className="fas fa-chart-line me-2" style={{ color: '#6366f1' }}></i>This Month
+              </h6>
+              <div className="d-flex justify-content-between mb-2">
+                <span className="text-secondary small">Conversions</span>
+                <span className="text-light small">24</span>
+              </div>
+              <div className="d-flex justify-content-between mb-2">
+                <span className="text-secondary small">Credits Used</span>
+                <span className="text-light small">38</span>
+              </div>
+              <div className="d-flex justify-content-between mb-2">
+                <span className="text-secondary small">Total Video Time</span>
+                <span className="text-light small">4h 32m</span>
+              </div>
+              <div className="d-flex justify-content-between">
+                <span className="text-secondary small">Storage Used</span>
+                <span className="text-light small">1.2 GB</span>
+              </div>
+            </div>
           </div>
         </div>
 

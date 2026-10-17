@@ -28,6 +28,9 @@ export default function Footer() {
               <li className="mb-2"><Link to="/dashboard" className="footer-link">Dashboard</Link></li>
               <li className="mb-2"><Link to="/pricing" className="footer-link">Pricing</Link></li>
               <li className="mb-2"><Link to="/backend" className="footer-link">PHP Backend</Link></li>
+              <li className="mb-2"><a href="/backend/install.php" className="footer-link" target="_blank" rel="noopener noreferrer">
+                <i className="fas fa-download me-1"></i>Install PHP
+              </a></li>
             </ul>
           </div>
 

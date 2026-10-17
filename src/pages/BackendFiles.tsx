@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
 
 const phpFiles = [
   {
@@ -1847,11 +1849,100 @@ COMMIT;`
 export default function BackendFiles() {
   const [activeFile, setActiveFile] = useState(0);
   const [copied, setCopied] = useState(false);
+  const [downloading, setDownloading] = useState(false);
 
   const copyCode = () => {
     navigator.clipboard.writeText(phpFiles[activeFile].code);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const downloadFile = (filename: string, content: string) => {
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const downloadAllFiles = async () => {
+    setDownloading(true);
+    try {
+      const zip = new JSZip();
+      const folder = zip.folder('slidecast-pro-backend')!;
+      
+      // Add all PHP files
+      phpFiles.forEach(file => {
+        folder.file(file.name, file.code);
+      });
+      
+      // Add README
+      folder.file('README.md', `# SlideCast Pro - PHP Backend
+
+## Installation
+1. Upload all files to your web server
+2. Visit install.php in your browser
+3. Follow the installation wizard
+4. Delete install.php after completion
+
+## Requirements
+- PHP 8.0+
+- MySQL 5.7+ / MariaDB 10.3+
+- FFmpeg
+- LibreOffice (headless)
+
+## Files
+- install.php - Installation wizard
+- config.php - Configuration (generated during install)
+- db_connect.php - Database connection handler
+- auth.php - Authentication functions
+- convert.php - Video conversion engine
+- upgrade.php - Upgrade system
+- api.php - REST API endpoints
+- index.php - Main entry point
+- database_schema.sql - Complete database schema
+
+Version: 2.1.0
+`);
+      
+      // Add .htaccess for Apache
+      folder.file('.htaccess', `RewriteEngine On
+RewriteBase /
+
+# Security - Block direct access to sensitive files
+<FilesMatch "\\.(php|sql|log)$">
+    Order Allow,Deny
+    Allow from all
+</FilesMatch>
+
+# Block access to config and sensitive files
+<Files "config.php">
+    Order Deny,Allow
+    Deny from all
+</Files>
+
+# Allow uploads directory
+<Directory "uploads">
+    Options -Indexes
+</Directory>
+
+# PHP settings
+php_value upload_max_filesize 500M
+php_value post_max_size 510M
+php_value max_execution_time 600
+php_value memory_limit 512M
+`);
+      
+      const content = await zip.generateAsync({ type: 'blob' });
+      saveAs(content, 'slidecast-pro-backend-v2.1.0.zip');
+    } catch (err) {
+      console.error('Failed to create ZIP:', err);
+    }
+    setDownloading(false);
   };
 
   return (
@@ -1919,6 +2010,47 @@ export default function BackendFiles() {
                 <pre className="mb-0 p-4" style={{ background: '#0a0e1a', color: '#e2e8f0', fontSize: '0.8rem', lineHeight: 1.6 }}>
                   <code>{phpFiles[activeFile].code}</code>
                 </pre>
+              </div>
+            </div>
+
+            {/* Download Section */}
+            <div className="card-custom mt-4">
+              <div className="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
+                <h5 className="text-light mb-0"><i className="fas fa-download me-2" style={{ color: '#6366f1' }}></i>Download Backend Files</h5>
+                <div className="d-flex gap-2">
+                  <button
+                    className="btn btn-sm btn-primary-custom"
+                    onClick={() => downloadFile(phpFiles[activeFile].name, phpFiles[activeFile].code)}
+                  >
+                    <i className="fas fa-file-download me-1"></i>Download Current
+                  </button>
+                  <button
+                    className="btn btn-sm btn-outline-custom"
+                    onClick={downloadAllFiles}
+                    disabled={downloading}
+                  >
+                    {downloading ? (
+                      <><span className="spinner-border spinner-border-sm me-1"></span>Downloading...</>
+                    ) : (
+                      <><i className="fas fa-file-archive me-1"></i>Download All Files</>
+                    )}
+                  </button>
+                </div>
+              </div>
+              <div className="p-3 rounded-3" style={{ background: 'rgba(15,23,42,0.5)' }}>
+                <div className="d-flex align-items-center mb-2">
+                  <i className="fas fa-info-circle me-2" style={{ color: '#0ea5e9' }}></i>
+                  <small className="text-secondary">
+                    Download all PHP backend files to deploy on your server. Includes installer, conversion engine, 
+                    database schema, authentication, API, and upgrade system.
+                  </small>
+                </div>
+                <div className="d-flex gap-2 flex-wrap mt-2">
+                  <span className="badge bg-dark"><i className="fas fa-file-code me-1"></i> {phpFiles.length} files</span>
+                  <span className="badge bg-dark"><i className="fas fa-database me-1"></i> MySQLi</span>
+                  <span className="badge bg-dark"><i className="fas fa-server me-1"></i> PHP 8.x</span>
+                  <span className="badge bg-success"><i className="fas fa-check me-1"></i> Production Ready</span>
+                </div>
               </div>
             </div>
 
