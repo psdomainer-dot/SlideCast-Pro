@@ -1,202 +1,241 @@
 import { Link } from 'react-router-dom';
-import { Upload, Play, Download, Shield, Clock, Users, Star, ArrowRight, CheckCircle, Zap, FileVideo, MonitorPlay } from 'lucide-react';
 
 export default function Home() {
   return (
-    <div>
+    <>
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-indigo-900 via-purple-900 to-indigo-800">
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
-          <div className="absolute top-40 right-10 w-72 h-72 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl animate-pulse delay-1000"></div>
-          <div className="absolute bottom-20 left-1/3 w-72 h-72 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl animate-pulse delay-500"></div>
+      <section className="hero-section">
+        <div className="particles">
+          {[...Array(20)].map((_, i) => (
+            <div
+              key={i}
+              className="particle"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 5}s`,
+                animationDuration: `${5 + Math.random() * 10}s`,
+              }}
+            />
+          ))}
         </div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-36">
-          <div className="text-center">
-            <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2 mb-6">
-              <Zap className="w-4 h-4 text-yellow-400" />
-              <span className="text-sm text-white/90">Trusted by 50,000+ educators worldwide</span>
+        <div className="container position-relative">
+          <div className="row align-items-center">
+            <div className="col-lg-6 animate-slide-up">
+              <div className="mb-3">
+                <span className="badge rounded-pill px-3 py-2" style={{ background: 'rgba(99,102,241,0.15)', color: '#818cf8' }}>
+                  <i className="fas fa-bolt me-1"></i> Now with AI-powered narration sync
+                </span>
+              </div>
+              <h1 className="hero-title">
+                Transform Your{' '}
+                <span className="gradient-text">Presentations</span>{' '}
+                Into Stunning Videos
+              </h1>
+              <p className="hero-subtitle">
+                Upload your PPTX files with embedded narration and convert them into 
+                professional MP4 videos in 480p, 720p, or 1080p. Perfect for lecturers, 
+                students, trainers, and content creators.
+              </p>
+              <div className="d-flex gap-3 flex-wrap">
+                <Link to="/upload" className="btn btn-primary-custom btn-lg">
+                  <i className="fas fa-rocket me-2"></i>Start Converting
+                </Link>
+                <Link to="/pricing" className="btn btn-outline-custom btn-lg">
+                  View Pricing
+                </Link>
+              </div>
+              <div className="d-flex gap-4 mt-4">
+                <div className="text-center">
+                  <div className="fs-4 fw-bold text-light">50K+</div>
+                  <small className="text-secondary">Conversions</small>
+                </div>
+                <div className="text-center">
+                  <div className="fs-4 fw-bold text-light">10K+</div>
+                  <small className="text-secondary">Users</small>
+                </div>
+                <div className="text-center">
+                  <div className="fs-4 fw-bold text-light">99.9%</div>
+                  <small className="text-secondary">Uptime</small>
+                </div>
+              </div>
             </div>
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white leading-tight mb-6">
-              Turn Presentations<br />
-              <span className="bg-gradient-to-r from-yellow-300 to-orange-400 bg-clip-text text-transparent">Into Videos</span>
-            </h1>
-            <p className="text-lg md:text-xl text-indigo-100 max-w-2xl mx-auto mb-10 leading-relaxed">
-              Upload your PPTX presentations with narration, and we'll render them into professional-quality MP4 videos in 480p, 720p, or 1080p resolution.
+            <div className="col-lg-6 d-none d-lg-block">
+              <div className="position-relative animate-float">
+                <div className="card-custom text-center p-5" style={{ background: 'rgba(99,102,241,0.05)' }}>
+                  <div className="mb-4">
+                    <i className="fas fa-file-powerpoint fa-5x" style={{ color: '#e84d31' }}></i>
+                  </div>
+                  <div className="d-flex justify-content-center align-items-center my-4">
+                    <div className="progress-custom w-75">
+                      <div className="progress-bar" style={{ width: '75%' }}></div>
+                    </div>
+                  </div>
+                  <p className="text-secondary mb-3">Converting presentation...</p>
+                  <div className="d-flex justify-content-center gap-3">
+                    <span className="badge bg-primary">480p</span>
+                    <span className="badge bg-info">720p</span>
+                    <span className="badge bg-success">1080p</span>
+                  </div>
+                  <div className="mt-4">
+                    <i className="fas fa-film fa-4x" style={{ color: '#6366f1' }}></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="py-5" style={{ background: 'rgba(15,23,42,0.5)' }}>
+        <div className="container py-5">
+          <div className="text-center mb-5">
+            <h2 className="section-title">Why Choose <span className="gradient-text">SlideCast Pro</span>?</h2>
+            <p className="section-subtitle">
+              Everything you need to turn your presentations into engaging video content
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                to="/upload"
-                className="inline-flex items-center justify-center px-8 py-4 bg-white text-indigo-700 rounded-xl font-bold text-lg hover:bg-indigo-50 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5"
-              >
-                <Upload className="w-5 h-5 mr-2" />
-                Start Converting
-              </Link>
-              <Link
-                to="/pricing"
-                className="inline-flex items-center justify-center px-8 py-4 bg-white/10 backdrop-blur-sm border border-white/30 text-white rounded-xl font-bold text-lg hover:bg-white/20 transition-all"
-              >
-                View Pricing
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Link>
+          </div>
+          <div className="row g-4">
+            <div className="col-lg-3 col-md-6">
+              <div className="card-custom h-100">
+                <div className="card-icon purple">
+                  <i className="fas fa-upload"></i>
+                </div>
+                <h5 className="text-light mb-2">Easy Upload</h5>
+                <p className="text-secondary mb-0">Drag & drop your PPTX files with embedded narration audio tracks.</p>
+              </div>
             </div>
-            <div className="mt-12 flex items-center justify-center space-x-6 text-indigo-200 text-sm">
-              <span className="flex items-center"><CheckCircle className="w-4 h-4 mr-1 text-green-400" /> No credit card required</span>
-              <span className="flex items-center"><CheckCircle className="w-4 h-4 mr-1 text-green-400" /> 3 free conversions</span>
-              <span className="hidden sm:flex items-center"><CheckCircle className="w-4 h-4 mr-1 text-green-400" /> Cancel anytime</span>
+            <div className="col-lg-3 col-md-6">
+              <div className="card-custom h-100">
+                <div className="card-icon blue">
+                  <i className="fas fa-magic"></i>
+                </div>
+                <h5 className="text-light mb-2">Smart Rendering</h5>
+                <p className="text-secondary mb-0">AI-powered rendering preserves all animations, transitions, and timing.</p>
+              </div>
+            </div>
+            <div className="col-lg-3 col-md-6">
+              <div className="card-custom h-100">
+                <div className="card-icon amber">
+                  <i className="fas fa-video"></i>
+                </div>
+                <h5 className="text-light mb-2">Multi-Resolution</h5>
+                <p className="text-secondary mb-0">Download in 480p, 720p, or 1080p HD quality MP4 format.</p>
+              </div>
+            </div>
+            <div className="col-lg-3 col-md-6">
+              <div className="card-custom h-100">
+                <div className="card-icon green">
+                  <i className="fas fa-microphone"></i>
+                </div>
+                <h5 className="text-light mb-2">Narration Sync</h5>
+                <p className="text-secondary mb-0">Perfect audio synchronization with each slide transition.</p>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* How It Works */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">How It Works</h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Convert your presentations to video in three simple steps
-            </p>
+      <section className="py-5">
+        <div className="container py-5">
+          <div className="text-center mb-5">
+            <h2 className="section-title">How It <span className="gradient-text">Works</span></h2>
+            <p className="section-subtitle">Three simple steps to convert your presentations</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              {
-                icon: <Upload className="w-8 h-8" />,
-                step: '01',
-                title: 'Upload Your PPTX',
-                desc: 'Upload your PowerPoint presentation with embedded narration, animations, and transitions intact.',
-                color: 'from-blue-500 to-indigo-600',
-              },
-              {
-                icon: <Play className="w-8 h-8" />,
-                step: '02',
-                title: 'We Render It',
-                desc: 'Our cloud engine processes each slide with timing, narration, and effects into a seamless video.',
-                color: 'from-purple-500 to-pink-600',
-              },
-              {
-                icon: <Download className="w-8 h-8" />,
-                step: '03',
-                title: 'Download MP4',
-                desc: 'Download your video in 480p, 720p, or 1080p resolution. Share on any platform instantly.',
-                color: 'from-orange-500 to-red-600',
-              },
-            ].map((item) => (
-              <div key={item.step} className="relative group">
-                <div className="bg-gray-50 rounded-2xl p-8 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-gray-100">
-                  <div className={`w-16 h-16 bg-gradient-to-br ${item.color} rounded-2xl flex items-center justify-center text-white mb-6 group-hover:scale-110 transition-transform`}>
-                    {item.icon}
-                  </div>
-                  <div className="text-xs font-bold text-indigo-400 mb-2">STEP {item.step}</div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-3">{item.title}</h3>
-                  <p className="text-gray-600 leading-relaxed">{item.desc}</p>
+          <div className="row g-4">
+            <div className="col-md-4">
+              <div className="text-center">
+                <div className="rounded-circle d-inline-flex align-items-center justify-content-center mb-4 animate-pulse-glow"
+                  style={{ width: 80, height: 80, background: 'rgba(99,102,241,0.15)', border: '2px solid rgba(99,102,241,0.3)' }}>
+                  <span className="fs-3 fw-bold" style={{ color: '#6366f1' }}>1</span>
                 </div>
+                <h5 className="text-light">Upload PPTX</h5>
+                <p className="text-secondary">Upload your PowerPoint file with embedded narration audio.</p>
               </div>
-            ))}
+            </div>
+            <div className="col-md-4">
+              <div className="text-center">
+                <div className="rounded-circle d-inline-flex align-items-center justify-content-center mb-4 animate-pulse-glow"
+                  style={{ width: 80, height: 80, background: 'rgba(14,165,233,0.15)', border: '2px solid rgba(14,165,233,0.3)', animationDelay: '1s' }}>
+                  <span className="fs-3 fw-bold" style={{ color: '#0ea5e9' }}>2</span>
+                </div>
+                <h5 className="text-light">Choose Quality</h5>
+                <p className="text-secondary">Select your preferred output resolution: 480p, 720p, or 1080p.</p>
+              </div>
+            </div>
+            <div className="col-md-4">
+              <div className="text-center">
+                <div className="rounded-circle d-inline-flex align-items-center justify-content-center mb-4 animate-pulse-glow"
+                  style={{ width: 80, height: 80, background: 'rgba(16,185,129,0.15)', border: '2px solid rgba(16,185,129,0.3)', animationDelay: '2s' }}>
+                  <span className="fs-3 fw-bold" style={{ color: '#10b981' }}>3</span>
+                </div>
+                <h5 className="text-light">Download Video</h5>
+                <p className="text-secondary">Get your MP4 video ready to share anywhere.</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Features */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Powerful Features</h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Everything you need to create professional presentation videos
-            </p>
+      {/* Target Audience */}
+      <section className="py-5" style={{ background: 'rgba(15,23,42,0.5)' }}>
+        <div className="container py-5">
+          <div className="text-center mb-5">
+            <h2 className="section-title">Built For <span className="gradient-text">You</span></h2>
+            <p className="section-subtitle">Designed for professionals who need quality video content</p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              { icon: <FileVideo className="w-6 h-6" />, title: 'PPTX Support', desc: 'Full support for PowerPoint 2007-2021 formats with animations and transitions.' },
-              { icon: <MonitorPlay className="w-6 h-6" />, title: 'Multiple Resolutions', desc: 'Export in 480p, 720p, or 1080p HD. Perfect for any screen size.' },
-              { icon: <Clock className="w-6 h-6" />, title: 'Fast Rendering', desc: 'Cloud-based rendering engine processes your files in minutes, not hours.' },
-              { icon: <Shield className="w-6 h-6" />, title: 'Secure Processing', desc: 'Files are encrypted and auto-deleted after 24 hours. Your content stays private.' },
-              { icon: <Users className="w-6 h-6" />, title: 'Team Collaboration', desc: 'Share projects with your team. Perfect for educational institutions.' },
-              { icon: <Star className="w-6 h-6" />, title: 'Batch Processing', desc: 'Convert multiple presentations at once. Save time on large projects.' },
-            ].map((feature, i) => (
-              <div key={i} className="bg-white rounded-xl p-6 border border-gray-100 hover:border-indigo-200 hover:shadow-lg transition-all duration-300">
-                <div className="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600 mb-4">
-                  {feature.icon}
-                </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">{feature.title}</h3>
-                <p className="text-gray-600 text-sm leading-relaxed">{feature.desc}</p>
+          <div className="row g-4">
+            <div className="col-lg-3 col-md-6">
+              <div className="card-custom text-center h-100">
+                <div className="fs-1 mb-3">👨‍🏫</div>
+                <h5 className="text-light">Lecturers</h5>
+                <p className="text-secondary small mb-0">Create video lectures from your slide decks for online courses and distance learning.</p>
               </div>
-            ))}
+            </div>
+            <div className="col-lg-3 col-md-6">
+              <div className="card-custom text-center h-100">
+                <div className="fs-1 mb-3">🎓</div>
+                <h5 className="text-light">Students</h5>
+                <p className="text-secondary small mb-0">Convert class presentations into shareable video submissions.</p>
+              </div>
+            </div>
+            <div className="col-lg-3 col-md-6">
+              <div className="card-custom text-center h-100">
+                <div className="fs-1 mb-3">🏋️</div>
+                <h5 className="text-light">Trainers</h5>
+                <p className="text-secondary small mb-0">Produce training videos from corporate presentations efficiently.</p>
+              </div>
+            </div>
+            <div className="col-lg-3 col-md-6">
+              <div className="card-custom text-center h-100">
+                <div className="fs-1 mb-3">🎬</div>
+                <h5 className="text-light">Content Creators</h5>
+                <p className="text-secondary small mb-0">Turn informational slides into engaging video content for social media.</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Use Cases */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Built For You</h2>
-            <p className="text-lg text-gray-600">Who uses SlideCast Pro?</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { emoji: '👨‍🏫', title: 'Lecturers', desc: 'Create video lectures from your slide decks for online courses and flipped classrooms.' },
-              { emoji: '🎓', title: 'Students', desc: 'Turn study notes into video presentations for group projects and submissions.' },
-              { emoji: '🏋️', title: 'Trainers', desc: 'Produce training videos from corporate presentations for employee onboarding.' },
-              { emoji: '🎬', title: 'Content Creators', desc: 'Generate video content from your presentations for YouTube, courses, and social media.' },
-            ].map((item, i) => (
-              <div key={i} className="text-center p-6 rounded-2xl bg-gradient-to-b from-gray-50 to-white border border-gray-100 hover:shadow-lg transition-all">
-                <div className="text-5xl mb-4">{item.emoji}</div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">{item.title}</h3>
-                <p className="text-gray-600 text-sm">{item.desc}</p>
-              </div>
-            ))}
+      {/* CTA Section */}
+      <section className="py-5">
+        <div className="container py-5">
+          <div className="card-custom text-center p-5" style={{ background: 'linear-gradient(135deg, rgba(99,102,241,0.1), rgba(14,165,233,0.1))' }}>
+            <h2 className="text-light mb-3">Ready to Transform Your Presentations?</h2>
+            <p className="text-secondary mb-4">Join thousands of educators and content creators who trust SlideCast Pro.</p>
+            <div className="d-flex gap-3 justify-content-center flex-wrap">
+              <Link to="/register" className="btn btn-primary-custom btn-lg">
+                <i className="fas fa-user-plus me-2"></i>Create Free Account
+              </Link>
+              <Link to="/pricing" className="btn btn-outline-custom btn-lg">
+                View Plans
+              </Link>
+            </div>
           </div>
         </div>
       </section>
-
-      {/* Testimonials */}
-      <section className="py-20 bg-gradient-to-br from-indigo-50 to-purple-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Loved by Educators</h2>
-            <p className="text-lg text-gray-600">See what our users say</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              { name: 'Dr. Sarah Chen', role: 'University Professor', text: 'SlideCast Pro has transformed how I deliver online lectures. My students love the video format!', rating: 5 },
-              { name: 'Marcus Johnson', role: 'Corporate Trainer', text: 'We converted 200+ training decks in a week. The quality is outstanding and the process is seamless.', rating: 5 },
-              { name: 'Aisha Patel', role: 'YouTube Educator', text: 'I use this for all my course content. The 1080p output is crystal clear and the rendering is fast.', rating: 5 },
-            ].map((testimonial, i) => (
-              <div key={i} className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
-                <div className="flex mb-4">
-                  {Array.from({ length: testimonial.rating }).map((_, j) => (
-                    <Star key={j} className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-                  ))}
-                </div>
-                <p className="text-gray-700 mb-6 leading-relaxed italic">"{testimonial.text}"</p>
-                <div>
-                  <p className="font-bold text-gray-900">{testimonial.name}</p>
-                  <p className="text-sm text-gray-500">{testimonial.role}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="py-20 bg-gradient-to-r from-indigo-600 to-purple-600">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Ready to Convert Your First Presentation?</h2>
-          <p className="text-lg text-indigo-100 mb-8">
-            Start with 3 free conversions. No credit card required.
-          </p>
-          <Link
-            to="/register"
-            className="inline-flex items-center px-8 py-4 bg-white text-indigo-700 rounded-xl font-bold text-lg hover:bg-indigo-50 transition-all shadow-xl"
-          >
-            Get Started Free
-            <ArrowRight className="w-5 h-5 ml-2" />
-          </Link>
-        </div>
-      </section>
-    </div>
+    </>
   );
 }

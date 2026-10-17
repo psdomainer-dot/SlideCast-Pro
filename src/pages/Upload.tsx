@@ -1,25 +1,29 @@
-import { useState, useContext, useRef } from 'react';
-import { Link } from 'react-router-dom';
-import { AppContext } from '../App';
-import { Upload as UploadIcon, FileVideo, CheckCircle, AlertCircle, X, Loader2, Download, Monitor, Smartphone, Tablet } from 'lucide-react';
+import { useState, useCallback, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { AppContext } from '../context/AppContext';
 
 interface ConversionJob {
   id: string;
   filename: string;
-  fileSize: string;
-  status: 'uploading' | 'processing' | 'completed' | 'error';
+  slides: number;
+  status: 'queued' | 'processing' | 'completed' | 'failed';
   progress: number;
-  resolutions: { label: string; value: string; ready: boolean }[];
+  resolutions: string[];
+  timestamp: string;
 }
 
 export default function Upload() {
   const { isAuthenticated, user } = useContext(AppContext);
+  const navigate = useNavigate();
+  const [file, setFile] = useState<File | null>(null);
   const [dragActive, setDragActive] = useState(false);
-  const [jobs, setJobs] = useState<ConversionJob[]>([]);
-  const [selectedResolutions, setSelectedResolutions] = useState<string[]>(['720p', '1080p']);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [converting, setConverting] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [currentStep, setCurrentStep] = useState('');
+  const [selectedResolutions, setSelectedResolutions] = useState(['720p']);
+  const [completedJob, setCompletedJob] = useState<ConversionJob | null>(null);
 
-  const handleDrag = (e: React.DragEvent) => {
+  const handleDrag = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
     if (e.type === 'dragenter' || e.type === 'dragover') {
@@ -27,284 +31,282 @@ export default function Upload() {
     } else if (e.type === 'dragleave') {
       setDragActive(false);
     }
-  };
+  }, []);
 
-  const simulateConversion = (jobId: string) => {
-    // Simulate upload progress
-    let progress = 0;
-    const uploadInterval = setInterval(() => {
-      progress += Math.random() * 15;
-      if (progress >= 100) {
-        progress = 100;
-        clearInterval(uploadInterval);
-        // Move to processing
-        setJobs(prev => prev.map(j => j.id === jobId ? { ...j, status: 'processing', progress: 0 } : j));
-        
-        // Simulate rendering
-        let renderProgress = 0;
-        const renderInterval = setInterval(() => {
-          renderProgress += Math.random() * 8;
-          if (renderProgress >= 100) {
-            renderProgress = 100;
-            clearInterval(renderInterval);
-            setJobs(prev => prev.map(j => j.id === jobId ? { 
-              ...j, 
-              status: 'completed', 
-              progress: 100,
-              resolutions: j.resolutions.map(r => ({ ...r, ready: selectedResolutions.includes(r.value) }))
-            } : j));
-          } else {
-            setJobs(prev => prev.map(j => j.id === jobId ? { ...j, progress: Math.min(renderProgress, 99) } : j));
-          }
-        }, 300);
-      } else {
-        setJobs(prev => prev.map(j => j.id === jobId ? { ...j, progress: Math.min(progress, 99) } : j));
-      }
-    }, 200);
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
+  const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    
-    if (!isAuthenticated) return;
-    
-    const files = e.dataTransfer.files;
-    if (files && files.length > 0) {
-      processFiles(files);
-    }
-  };
-
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      processFiles(e.target.files);
-    }
-  };
-
-  const processFiles = (files: FileList) => {
-    Array.from(files).forEach(file => {
-      if (file.name.endsWith('.pptx') || file.name.endsWith('.ppt')) {
-        const newJob: ConversionJob = {
-          id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-          filename: file.name,
-          fileSize: (file.size / (1024 * 1024)).toFixed(1) + ' MB',
-          status: 'uploading',
-          progress: 0,
-          resolutions: [
-            { label: '480p', value: '480p', ready: false },
-            { label: '720p HD', value: '720p', ready: false },
-            { label: '1080p Full HD', value: '1080p', ready: false },
-          ],
-        };
-        setJobs(prev => [newJob, ...prev]);
-        simulateConversion(newJob.id);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      const f = e.dataTransfer.files[0];
+      if (f.name.endsWith('.pptx')) {
+        setFile(f);
+      } else {
+        alert('Please upload a .pptx file');
       }
-    });
-  };
+    }
+  }, []);
 
-  const removeJob = (id: string) => {
-    setJobs(prev => prev.filter(j => j.id !== id));
+  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setFile(e.target.files[0]);
+    }
   };
 
   const toggleResolution = (res: string) => {
-    setSelectedResolutions(prev => 
+    setSelectedResolutions(prev =>
       prev.includes(res) ? prev.filter(r => r !== res) : [...prev, res]
     );
   };
 
+  const startConversion = () => {
+    if (!file || selectedResolutions.length === 0) return;
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+
+    setConverting(true);
+    setProgress(0);
+
+    const steps = [
+      'Analyzing presentation structure...',
+      'Extracting slides and media...',
+      'Processing narration audio...',
+      'Rendering slides at selected resolution...',
+      'Synchronizing audio with slides...',
+      'Encoding final video...',
+      'Optimizing output quality...',
+      'Finalizing conversion...'
+    ];
+
+    let stepIndex = 0;
+    const interval = setInterval(() => {
+      setProgress(prev => {
+        const next = prev + Math.random() * 12 + 3;
+        if (next >= 100) {
+          clearInterval(interval);
+          setConverting(false);
+          setCompletedJob({
+            id: 'JOB-' + Date.now(),
+            filename: file.name,
+            slides: Math.floor(Math.random() * 30) + 10,
+            status: 'completed',
+            progress: 100,
+            resolutions: selectedResolutions,
+            timestamp: new Date().toLocaleString(),
+          });
+          return 100;
+        }
+        const newStepIndex = Math.floor((next / 100) * steps.length);
+        if (newStepIndex !== stepIndex && newStepIndex < steps.length) {
+          stepIndex = newStepIndex;
+          setCurrentStep(steps[stepIndex]);
+        }
+        return next;
+      });
+    }, 500);
+
+    setCurrentStep(steps[0]);
+  };
+
+  const resetUpload = () => {
+    setFile(null);
+    setConverting(false);
+    setProgress(0);
+    setCurrentStep('');
+    setCompletedJob(null);
+  };
+
   if (!isAuthenticated) {
     return (
-      <div className="min-h-[70vh] flex items-center justify-center bg-gray-50 px-4">
-        <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12 max-w-md w-full text-center border border-gray-100">
-          <div className="w-20 h-20 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-6">
-            <UploadIcon className="w-10 h-10 text-indigo-600" />
-          </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-3">Sign In Required</h2>
-          <p className="text-gray-600 mb-8">Please sign in or create an account to start converting your presentations.</p>
-          <div className="space-y-3">
-            <Link
-              to="/register"
-              className="block w-full px-6 py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 transition-colors"
-            >
-              Create Free Account
-            </Link>
-            <Link
-              to="/login"
-              className="block w-full px-6 py-3 border border-gray-200 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-colors"
-            >
-              Sign In
-            </Link>
+      <section className="py-5 mt-5">
+        <div className="container py-5">
+          <div className="card-custom text-center p-5 mx-auto" style={{ maxWidth: 600 }}>
+            <i className="fas fa-lock fa-3x mb-4" style={{ color: '#6366f1' }}></i>
+            <h3 className="text-light mb-3">Login Required</h3>
+            <p className="text-secondary mb-4">Please login or create an account to convert your presentations.</p>
+            <div className="d-flex gap-3 justify-content-center">
+              <button onClick={() => navigate('/login')} className="btn btn-primary-custom">Login</button>
+              <button onClick={() => navigate('/register')} className="btn btn-outline-custom">Sign Up</button>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
     );
   }
 
   return (
-    <div className="min-h-[80vh] bg-gray-50 py-12">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-10">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">Convert PPTX to MP4</h1>
-          <p className="text-gray-600 text-lg">Upload your presentation and we'll render it into a professional video</p>
+    <section className="py-5 mt-5">
+      <div className="container py-5">
+        <div className="text-center mb-5">
+          <h2 className="section-title">Convert <span className="gradient-text">PPTX to MP4</span></h2>
+          <p className="section-subtitle">Upload your presentation and convert it to video in seconds</p>
         </div>
 
-        {/* Credits Info */}
-        <div className="bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-100 rounded-xl p-4 mb-8 flex items-center justify-between flex-wrap gap-3">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
-              <FileVideo className="w-5 h-5 text-indigo-600" />
-            </div>
-            <div>
-              <p className="font-semibold text-gray-900">Credits Available: <span className="text-indigo-600">{user?.credits || 3}</span></p>
-              <p className="text-sm text-gray-500">Each conversion costs 1 credit</p>
-            </div>
-          </div>
-          <Link to="/pricing" className="text-sm font-medium text-indigo-600 hover:text-indigo-700">
-            Buy more credits →
-          </Link>
-        </div>
-
-        {/* Resolution Selection */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6 mb-8">
-          <h3 className="font-semibold text-gray-900 mb-4">Output Resolution</h3>
-          <div className="flex flex-wrap gap-3">
-            {[
-              { value: '480p', label: '480p SD', icon: <Smartphone className="w-4 h-4" />, desc: 'Mobile' },
-              { value: '720p', label: '720p HD', icon: <Tablet className="w-4 h-4" />, desc: 'Tablet/Laptop' },
-              { value: '1080p', label: '1080p Full HD', icon: <Monitor className="w-4 h-4" />, desc: 'Desktop/TV' },
-            ].map(res => (
-              <button
-                key={res.value}
-                onClick={() => toggleResolution(res.value)}
-                className={`flex items-center space-x-3 px-5 py-3 rounded-xl border-2 transition-all ${
-                  selectedResolutions.includes(res.value)
-                    ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
-                    : 'border-gray-200 text-gray-600 hover:border-gray-300'
-                }`}
+        <div className="row justify-content-center">
+          <div className="col-lg-8">
+            {/* Upload Zone */}
+            {!file && !converting && !completedJob && (
+              <div
+                className={`upload-zone ${dragActive ? 'active' : ''}`}
+                onDragEnter={handleDrag}
+                onDragLeave={handleDrag}
+                onDragOver={handleDrag}
+                onDrop={handleDrop}
+                onClick={() => document.getElementById('fileInput')?.click()}
               >
-                {res.icon}
-                <div className="text-left">
-                  <div className="font-semibold text-sm">{res.label}</div>
-                  <div className="text-xs opacity-70">{res.desc}</div>
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
+                <input
+                  type="file"
+                  id="fileInput"
+                  accept=".pptx"
+                  className="d-none"
+                  onChange={handleFileInput}
+                />
+                <i className="fas fa-cloud-upload-alt"></i>
+                <h4 className="text-light mt-3">Drag & Drop your PPTX file here</h4>
+                <p className="text-secondary mb-3">or click to browse files</p>
+                <span className="badge bg-dark px-3 py-2">
+                  <i className="fas fa-info-circle me-1"></i> Supports .pptx files up to 500MB
+                </span>
+              </div>
+            )}
 
-        {/* Upload Area */}
-        <div
-          className={`relative border-2 border-dashed rounded-2xl p-12 text-center transition-all cursor-pointer ${
-            dragActive
-              ? 'border-indigo-500 bg-indigo-50'
-              : 'border-gray-300 bg-white hover:border-indigo-400 hover:bg-indigo-50/30'
-          }`}
-          onDragEnter={handleDrag}
-          onDragLeave={handleDrag}
-          onDragOver={handleDrag}
-          onDrop={handleDrop}
-          onClick={() => fileInputRef.current?.click()}
-        >
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept=".pptx,.ppt"
-            multiple
-            className="hidden"
-            onChange={handleFileSelect}
-          />
-          <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <UploadIcon className={`w-8 h-8 text-indigo-600 ${dragActive ? 'animate-bounce' : ''}`} />
-          </div>
-          <h3 className="text-xl font-bold text-gray-900 mb-2">
-            {dragActive ? 'Drop your files here!' : 'Drag & drop your PPTX files'}
-          </h3>
-          <p className="text-gray-500 mb-4">or click to browse your computer</p>
-          <div className="flex items-center justify-center space-x-4 text-sm text-gray-400">
-            <span>Supports .pptx, .ppt</span>
-            <span>•</span>
-            <span>Max 500MB per file</span>
-          </div>
-        </div>
-
-        {/* Jobs List */}
-        {jobs.length > 0 && (
-          <div className="mt-8 space-y-4">
-            <h3 className="font-semibold text-gray-900 text-lg">Conversion Jobs</h3>
-            {jobs.map(job => (
-              <div key={job.id} className="bg-white rounded-xl border border-gray-200 p-6">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center space-x-3">
-                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                      job.status === 'completed' ? 'bg-green-100' : 
-                      job.status === 'error' ? 'bg-red-100' : 'bg-indigo-100'
-                    }`}>
-                      {job.status === 'completed' ? (
-                        <CheckCircle className="w-5 h-5 text-green-600" />
-                      ) : job.status === 'error' ? (
-                        <AlertCircle className="w-5 h-5 text-red-600" />
-                      ) : (
-                        <Loader2 className="w-5 h-5 text-indigo-600 animate-spin" />
-                      )}
-                    </div>
-                    <div>
-                      <p className="font-semibold text-gray-900">{job.filename}</p>
-                      <p className="text-sm text-gray-500">{job.fileSize}</p>
-                    </div>
+            {/* File Selected */}
+            {file && !converting && !completedJob && (
+              <div className="card-custom">
+                <div className="d-flex align-items-center mb-4">
+                  <div className="card-icon purple me-3 mb-0">
+                    <i className="fas fa-file-powerpoint"></i>
                   </div>
-                  <button
-                    onClick={() => removeJob(job.id)}
-                    className="text-gray-400 hover:text-gray-600 p-1"
-                  >
-                    <X className="w-5 h-5" />
+                  <div>
+                    <h5 className="text-light mb-0">{file.name}</h5>
+                    <small className="text-secondary">{(file.size / 1024 / 1024).toFixed(2)} MB</small>
+                  </div>
+                  <button className="btn btn-sm btn-outline-danger ms-auto" onClick={resetUpload}>
+                    <i className="fas fa-times"></i>
                   </button>
                 </div>
 
-                {/* Progress Bar */}
-                {(job.status === 'uploading' || job.status === 'processing') && (
-                  <div className="mb-4">
-                    <div className="flex justify-between text-sm mb-1">
-                      <span className="text-gray-600">
-                        {job.status === 'uploading' ? 'Uploading...' : 'Rendering video...'}
-                      </span>
-                      <span className="font-medium text-indigo-600">{Math.round(job.progress)}%</span>
-                    </div>
-                    <div className="w-full bg-gray-100 rounded-full h-2">
+                {/* Resolution Selection */}
+                <div className="mb-4">
+                  <h6 className="text-light mb-3">
+                    <i className="fas fa-sliders-h me-2"></i>Select Output Resolution
+                  </h6>
+                  <div className="d-flex gap-3 flex-wrap">
+                    {[
+                      { res: '480p', label: '480p SD', desc: '854×480 • ~50MB', credits: 1 },
+                      { res: '720p', label: '720p HD', desc: '1280×720 • ~120MB', credits: 2 },
+                      { res: '1080p', label: '1080p Full HD', desc: '1920×1080 • ~250MB', credits: 3 },
+                    ].map(item => (
                       <div
-                        className={`h-2 rounded-full transition-all duration-300 ${
-                          job.status === 'uploading' ? 'bg-blue-500' : 'bg-indigo-500'
-                        }`}
-                        style={{ width: `${job.progress}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Download Options */}
-                {job.status === 'completed' && (
-                  <div className="flex flex-wrap gap-3">
-                    {job.resolutions.map(res => (
-                      <button
-                        key={res.value}
-                        disabled={!res.ready}
-                        className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                          res.ready
-                            ? 'bg-green-50 text-green-700 border border-green-200 hover:bg-green-100'
-                            : 'bg-gray-50 text-gray-400 border border-gray-200 cursor-not-allowed'
-                        }`}
+                        key={item.res}
+                        className={`resolution-badge flex-grow-1 ${selectedResolutions.includes(item.res) ? 'active' : ''}`}
+                        onClick={() => toggleResolution(item.res)}
+                        style={{ background: selectedResolutions.includes(item.res) ? 'rgba(99,102,241,0.1)' : 'rgba(15,23,42,0.5)', borderRadius: 12, padding: '1rem' }}
                       >
-                        <Download className="w-4 h-4" />
-                        {res.label} {res.ready ? '✓' : '(skipped)'}
-                      </button>
+                        <div className="text-center w-100">
+                          <div className="fw-bold text-light">{item.label}</div>
+                          <small className="text-secondary">{item.desc}</small>
+                          <div className="mt-1">
+                            <span className="badge bg-warning text-dark">{item.credits} credit{item.credits > 1 ? 's' : ''}</span>
+                          </div>
+                        </div>
+                      </div>
                     ))}
                   </div>
-                )}
+                </div>
+
+                {/* Credits Info */}
+                <div className="d-flex justify-content-between align-items-center mb-4 p-3 rounded-3" style={{ background: 'rgba(99,102,241,0.05)' }}>
+                  <span className="text-secondary">
+                    <i className="fas fa-coins text-warning me-2"></i>
+                    Your balance: <strong className="text-light">{user?.credits} credits</strong>
+                  </span>
+                  <span className="text-secondary">
+                    Total cost: <strong className="text-light">{selectedResolutions.length} credit{selectedResolutions.length !== 1 ? 's' : ''}</strong>
+                  </span>
+                </div>
+
+                <button
+                  className="btn btn-primary-custom w-100 btn-lg"
+                  onClick={startConversion}
+                  disabled={selectedResolutions.length === 0}
+                >
+                  <i className="fas fa-play me-2"></i>Start Conversion
+                </button>
               </div>
-            ))}
+            )}
+
+            {/* Converting */}
+            {converting && (
+              <div className="card-custom text-center">
+                <div className="mb-4">
+                  <div className="spinner-border text-primary mb-3" style={{ width: '3rem', height: '3rem' }}></div>
+                  <h4 className="text-light">Converting Your Presentation</h4>
+                  <p className="text-secondary">{currentStep}</p>
+                </div>
+                <div className="progress-custom mb-3">
+                  <div className="progress-bar" style={{ width: `${progress}%` }}></div>
+                </div>
+                <div className="d-flex justify-content-between">
+                  <small className="text-secondary">{file?.name}</small>
+                  <small className="text-light fw-bold">{Math.round(progress)}%</small>
+                </div>
+                <div className="mt-3">
+                  <span className="badge bg-dark me-2">
+                    <i className="fas fa-clock me-1"></i> Est. {Math.max(1, Math.round((100 - progress) / 10))} min remaining
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* Completed */}
+            {completedJob && (
+              <div className="card-custom text-center">
+                <div className="mb-4">
+                  <i className="fas fa-check-circle fa-4x text-success mb-3"></i>
+                  <h4 className="text-light">Conversion Complete!</h4>
+                  <p className="text-secondary">Your video is ready for download</p>
+                </div>
+
+                <div className="d-flex gap-3 justify-content-center flex-wrap mb-4">
+                  {completedJob.resolutions.map(res => (
+                    <button key={res} className="btn btn-primary-custom">
+                      <i className="fas fa-download me-2"></i>Download {res}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="p-3 rounded-3 text-start" style={{ background: 'rgba(15,23,42,0.5)' }}>
+                  <div className="row">
+                    <div className="col-6">
+                      <small className="text-secondary">File</small>
+                      <div className="text-light small">{completedJob.filename}</div>
+                    </div>
+                    <div className="col-6">
+                      <small className="text-secondary">Slides</small>
+                      <div className="text-light small">{completedJob.slides} slides</div>
+                    </div>
+                    <div className="col-6 mt-2">
+                      <small className="text-secondary">Job ID</small>
+                      <div className="text-light small">{completedJob.id}</div>
+                    </div>
+                    <div className="col-6 mt-2">
+                      <small className="text-secondary">Completed</small>
+                      <div className="text-light small">{completedJob.timestamp}</div>
+                    </div>
+                  </div>
+                </div>
+
+                <button className="btn btn-outline-custom mt-4" onClick={resetUpload}>
+                  <i className="fas fa-plus me-2"></i>Convert Another
+                </button>
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
-    </div>
+    </section>
   );
 }

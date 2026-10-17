@@ -1,5 +1,6 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { useState, createContext } from 'react';
+import { useState, useEffect } from 'react';
+import { HashRouter as Router, Routes, Route } from 'react-router-dom';
+import { AppProvider } from './context/AppContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
@@ -9,35 +10,25 @@ import Pricing from './pages/Pricing';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import About from './pages/About';
-
-export interface User {
-  name: string;
-  email: string;
-  credits: number;
-  plan: string;
-}
-
-export interface AppContextType {
-  user: User | null;
-  setUser: (user: User | null) => void;
-  isAuthenticated: boolean;
-}
-
-export const AppContext = createContext<AppContextType>({
-  user: null,
-  setUser: () => {},
-  isAuthenticated: false,
-});
+import BackendFiles from './pages/BackendFiles';
 
 function App() {
-  const [user, setUser] = useState<User | null>(null);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
-    <AppContext.Provider value={{ user, setUser, isAuthenticated: !!user }}>
+    <AppProvider>
       <Router>
-        <div className="min-h-screen flex flex-col bg-gray-50">
-          <Navbar />
-          <main className="flex-1">
+        <div className="d-flex flex-column min-vh-100">
+          <Navbar scrolled={scrolled} />
+          <main className="flex-grow-1">
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/upload" element={<Upload />} />
@@ -46,12 +37,13 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/about" element={<About />} />
+              <Route path="/backend" element={<BackendFiles />} />
             </Routes>
           </main>
           <Footer />
         </div>
       </Router>
-    </AppContext.Provider>
+    </AppProvider>
   );
 }
 

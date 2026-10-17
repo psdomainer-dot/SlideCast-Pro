@@ -1,167 +1,179 @@
-import { Link } from 'react-router-dom';
-import { Users, Target, Shield, Globe, Award, Heart, ArrowRight } from 'lucide-react';
-
 export default function About() {
-  const team = [
-    { name: 'Alex Rivera', role: 'CEO & Co-Founder', emoji: '👨‍💼' },
-    { name: 'Dr. Priya Sharma', role: 'CTO & Co-Founder', emoji: '👩‍💻' },
-    { name: 'James O\'Brien', role: 'Head of Engineering', emoji: '👨‍🔬' },
-    { name: 'Maria Santos', role: 'Head of Design', emoji: '👩‍🎨' },
-    { name: 'David Kim', role: 'Lead Developer', emoji: '👨‍💻' },
-    { name: 'Sarah Thompson', role: 'Customer Success', emoji: '👩‍💼' },
-  ];
-
-  const milestones = [
-    { year: '2022', event: 'SlideCast Pro founded in San Francisco' },
-    { year: '2023', event: 'Launched beta with 1,000 users' },
-    { year: '2024', event: 'Reached 10,000 active users' },
-    { year: '2025', event: 'Enterprise plan launched' },
-    { year: '2026', event: '50,000+ users worldwide' },
-  ];
-
   return (
-    <div className="min-h-[80vh]">
-      {/* Hero */}
-      <section className="bg-gradient-to-br from-indigo-900 via-purple-900 to-indigo-800 py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">About SlideCast Pro</h1>
-          <p className="text-xl text-indigo-200 max-w-2xl mx-auto">
-            We're on a mission to make presentation-to-video conversion accessible to everyone.
+    <section className="py-5 mt-5">
+      <div className="container py-5">
+        {/* Hero */}
+        <div className="text-center mb-5">
+          <h2 className="section-title">About <span className="gradient-text">SlideCast Pro</span></h2>
+          <p className="section-subtitle">
+            Empowering educators and content creators to transform presentations into professional videos
           </p>
         </div>
-      </section>
 
-      {/* Mission */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-6">Our Mission</h2>
-              <p className="text-lg text-gray-600 leading-relaxed mb-4">
-                SlideCast Pro was born from a simple observation: millions of educators, trainers, and content creators spend hours crafting beautiful presentations, but struggle to convert them into engaging video content.
-              </p>
-              <p className="text-lg text-gray-600 leading-relaxed mb-4">
-                We built SlideCast Pro to bridge that gap. Our cloud-powered rendering engine takes your PPTX presentations — complete with animations, transitions, and narration — and transforms them into professional-quality MP4 videos in minutes.
-              </p>
-              <p className="text-lg text-gray-600 leading-relaxed">
-                Whether you're a university lecturer creating online course materials, a corporate trainer building onboarding videos, or a content creator producing educational content — SlideCast Pro is built for you.
-              </p>
+        {/* Mission */}
+        <div className="row align-items-center mb-5">
+          <div className="col-lg-6 mb-4">
+            <h3 className="text-light mb-3">Our Mission</h3>
+            <p className="text-secondary mb-3">
+              SlideCast Pro was founded with a simple belief: great educational content shouldn't require 
+              expensive video production tools. We've built a platform that lets anyone with a PowerPoint 
+              presentation create professional-quality video content in minutes.
+            </p>
+            <p className="text-secondary mb-3">
+              Whether you're a university lecturer creating online course materials, a corporate trainer 
+              developing training videos, or a content creator sharing knowledge — our platform handles 
+              the technical complexity so you can focus on what matters: your content.
+            </p>
+            <div className="d-flex gap-4 mt-4">
+              <div>
+                <div className="fs-3 fw-bold" style={{ color: '#6366f1' }}>50K+</div>
+                <small className="text-secondary">Videos Created</small>
+              </div>
+              <div>
+                <div className="fs-3 fw-bold" style={{ color: '#0ea5e9' }}>10K+</div>
+                <small className="text-secondary">Active Users</small>
+              </div>
+              <div>
+                <div className="fs-3 fw-bold" style={{ color: '#10b981' }}>150+</div>
+                <small className="text-secondary">Institutions</small>
+              </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              {[
-                { icon: <Users className="w-8 h-8" />, value: '50,000+', label: 'Active Users', color: 'from-blue-500 to-indigo-600' },
-                { icon: <Globe className="w-8 h-8" />, value: '120+', label: 'Countries', color: 'from-purple-500 to-pink-600' },
-                { icon: <Award className="w-8 h-8" />, value: '2M+', label: 'Videos Created', color: 'from-orange-500 to-red-600' },
-                { icon: <Heart className="w-8 h-8" />, value: '99.9%', label: 'Uptime', color: 'from-green-500 to-emerald-600' },
-              ].map((stat, i) => (
-                <div key={i} className="bg-gray-50 rounded-2xl p-6 text-center border border-gray-100">
-                  <div className={`w-14 h-14 bg-gradient-to-br ${stat.color} rounded-xl flex items-center justify-center text-white mx-auto mb-3`}>
-                    {stat.icon}
+          </div>
+          <div className="col-lg-6">
+            <div className="card-custom text-center p-5">
+              <div className="row g-3">
+                <div className="col-6">
+                  <div className="p-3 rounded-3" style={{ background: 'rgba(99,102,241,0.1)' }}>
+                    <i className="fas fa-university fa-2x mb-2" style={{ color: '#6366f1' }}></i>
+                    <div className="text-light small fw-bold">Education</div>
                   </div>
-                  <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-                  <p className="text-sm text-gray-500">{stat.label}</p>
                 </div>
-              ))}
+                <div className="col-6">
+                  <div className="p-3 rounded-3" style={{ background: 'rgba(14,165,233,0.1)' }}>
+                    <i className="fas fa-briefcase fa-2x mb-2" style={{ color: '#0ea5e9' }}></i>
+                    <div className="text-light small fw-bold">Corporate</div>
+                  </div>
+                </div>
+                <div className="col-6">
+                  <div className="p-3 rounded-3" style={{ background: 'rgba(245,158,11,0.1)' }}>
+                    <i className="fas fa-graduation-cap fa-2x mb-2" style={{ color: '#f59e0b' }}></i>
+                    <div className="text-light small fw-bold">Students</div>
+                  </div>
+                </div>
+                <div className="col-6">
+                  <div className="p-3 rounded-3" style={{ background: 'rgba(16,185,129,0.1)' }}>
+                    <i className="fas fa-video fa-2x mb-2" style={{ color: '#10b981' }}></i>
+                    <div className="text-light small fw-bold">Creators</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </section>
 
-      {/* Values */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Our Values</h2>
-            <p className="text-lg text-gray-600">The principles that guide everything we do</p>
+        {/* Technology Stack */}
+        <div className="mb-5">
+          <h3 className="text-light text-center mb-4">Technology & Architecture</h3>
+          <div className="row g-4">
+            <div className="col-md-4">
+              <div className="card-custom h-100">
+                <div className="card-icon purple">
+                  <i className="fas fa-code"></i>
+                </div>
+                <h5 className="text-light">Frontend</h5>
+                <ul className="list-unstyled text-secondary small">
+                  <li className="mb-1"><i className="fas fa-check text-success me-2"></i>Bootstrap 5.3</li>
+                  <li className="mb-1"><i className="fas fa-check text-success me-2"></i>Responsive Design</li>
+                  <li className="mb-1"><i className="fas fa-check text-success me-2"></i>Modern UI/UX</li>
+                  <li className="mb-1"><i className="fas fa-check text-success me-2"></i>Progressive Enhancement</li>
+                </ul>
+              </div>
+            </div>
+            <div className="col-md-4">
+              <div className="card-custom h-100">
+                <div className="card-icon blue">
+                  <i className="fas fa-server"></i>
+                </div>
+                <h5 className="text-light">Backend</h5>
+                <ul className="list-unstyled text-secondary small">
+                  <li className="mb-1"><i className="fas fa-check text-success me-2"></i>Procedural PHP 8.x</li>
+                  <li className="mb-1"><i className="fas fa-check text-success me-2"></i>MySQLi (Procedural)</li>
+                  <li className="mb-1"><i className="fas fa-check text-success me-2"></i>FFmpeg Video Processing</li>
+                  <li className="mb-1"><i className="fas fa-check text-success me-2"></i>Queue-based Rendering</li>
+                </ul>
+              </div>
+            </div>
+            <div className="col-md-4">
+              <div className="card-custom h-100">
+                <div className="card-icon green">
+                  <i className="fas fa-shield-alt"></i>
+                </div>
+                <h5 className="text-light">Infrastructure</h5>
+                <ul className="list-unstyled text-secondary small">
+                  <li className="mb-1"><i className="fas fa-check text-success me-2"></i>Installable System</li>
+                  <li className="mb-1"><i className="fas fa-check text-success me-2"></i>Auto-upgrade Support</li>
+                  <li className="mb-1"><i className="fas fa-check text-success me-2"></i>Database Versioning</li>
+                  <li className="mb-1"><i className="fas fa-check text-success me-2"></i>Secure Authentication</li>
+                </ul>
+              </div>
+            </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        </div>
+
+        {/* Installable & Upgradeable */}
+        <div className="card-custom mb-5 p-5" style={{ background: 'linear-gradient(135deg, rgba(99,102,241,0.05), rgba(14,165,233,0.05))' }}>
+          <div className="row align-items-center">
+            <div className="col-lg-8">
+              <h3 className="text-light mb-3">
+                <i className="fas fa-download me-2" style={{ color: '#6366f1' }}></i>
+                Installable & Upgradeable
+              </h3>
+              <p className="text-secondary mb-3">
+                SlideCast Pro is designed as a self-hosted, installable platform. Deploy it on your own 
+                server with our simple installer. The system includes automatic version checking and 
+                one-click upgrades to keep your installation current.
+              </p>
+              <ul className="list-unstyled text-secondary">
+                <li className="mb-2"><i className="fas fa-check-circle text-success me-2"></i>One-click installer with system requirements check</li>
+                <li className="mb-2"><i className="fas fa-check-circle text-success me-2"></i>Database migration system for upgrades</li>
+                <li className="mb-2"><i className="fas fa-check-circle text-success me-2"></i>Configuration management panel</li>
+                <li className="mb-2"><i className="fas fa-check-circle text-success me-2"></i>Backup and restore utilities</li>
+              </ul>
+            </div>
+            <div className="col-lg-4 text-center">
+              <div className="p-4 rounded-3" style={{ background: 'rgba(15,23,42,0.5)' }}>
+                <i className="fas fa-server fa-4x mb-3" style={{ color: '#6366f1' }}></i>
+                <div className="text-light fw-bold">v2.1.0</div>
+                <small className="text-secondary">Latest Stable Release</small>
+                <div className="mt-3">
+                  <span className="badge bg-success">Stable</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Team */}
+        <div className="text-center mb-5">
+          <h3 className="text-light mb-4">Our Team</h3>
+          <div className="row g-4 justify-content-center">
             {[
-              {
-                icon: <Target className="w-8 h-8" />,
-                title: 'Simplicity First',
-                desc: 'We believe powerful tools should be easy to use. Our platform is designed so anyone can convert presentations to video in under 2 minutes.',
-              },
-              {
-                icon: <Shield className="w-8 h-8" />,
-                title: 'Privacy & Security',
-                desc: 'Your presentations contain sensitive information. We use end-to-end encryption and automatically delete files after processing.',
-              },
-              {
-                icon: <Heart className="w-8 h-8" />,
-                title: 'Education For All',
-                desc: 'We offer free tiers and educational discounts because we believe quality education tools should be accessible to everyone.',
-              },
-            ].map((value, i) => (
-              <div key={i} className="bg-white rounded-2xl p-8 border border-gray-100 hover:shadow-lg transition-all">
-                <div className="w-14 h-14 bg-indigo-100 rounded-xl flex items-center justify-center text-indigo-600 mb-4">
-                  {value.icon}
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">{value.title}</h3>
-                <p className="text-gray-600 leading-relaxed">{value.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Timeline */}
-      <section className="py-16 bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Our Journey</h2>
-          </div>
-          <div className="space-y-0">
-            {milestones.map((milestone, i) => (
-              <div key={i} className="flex items-start space-x-4 relative">
-                <div className="flex flex-col items-center">
-                  <div className="w-4 h-4 bg-indigo-600 rounded-full border-4 border-indigo-100 z-10"></div>
-                  {i < milestones.length - 1 && <div className="w-0.5 h-16 bg-indigo-100"></div>}
-                </div>
-                <div className="pb-8">
-                  <span className="text-sm font-bold text-indigo-600">{milestone.year}</span>
-                  <p className="text-gray-900 font-medium">{milestone.event}</p>
+              { name: 'Sarah Chen', role: 'CEO & Founder', emoji: '👩‍💼' },
+              { name: 'Marcus Johnson', role: 'CTO', emoji: '👨‍💻' },
+              { name: 'Dr. Emily Park', role: 'Head of Education', emoji: '👩‍🔬' },
+              { name: 'Alex Rivera', role: 'Lead Developer', emoji: '🧑‍💻' },
+            ].map(member => (
+              <div key={member.name} className="col-lg-3 col-md-6">
+                <div className="card-custom text-center">
+                  <div className="fs-1 mb-3">{member.emoji}</div>
+                  <h6 className="text-light mb-1">{member.name}</h6>
+                  <small className="text-secondary">{member.role}</small>
                 </div>
               </div>
             ))}
           </div>
         </div>
-      </section>
-
-      {/* Team */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Meet Our Team</h2>
-            <p className="text-lg text-gray-600">The people behind SlideCast Pro</p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {team.map((member, i) => (
-              <div key={i} className="bg-white rounded-xl p-6 border border-gray-100 text-center hover:shadow-lg transition-all">
-                <div className="text-5xl mb-4">{member.emoji}</div>
-                <h3 className="text-lg font-bold text-gray-900">{member.name}</h3>
-                <p className="text-sm text-gray-500">{member.role}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="py-16 bg-gradient-to-r from-indigo-600 to-purple-600">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-white mb-4">Join 50,000+ Users Worldwide</h2>
-          <p className="text-lg text-indigo-100 mb-8">
-            Start converting your presentations into stunning videos today.
-          </p>
-          <Link
-            to="/register"
-            className="inline-flex items-center px-8 py-4 bg-white text-indigo-700 rounded-xl font-bold text-lg hover:bg-indigo-50 transition-all shadow-xl"
-          >
-            Get Started Free
-            <ArrowRight className="w-5 h-5 ml-2" />
-          </Link>
-        </div>
-      </section>
-    </div>
+      </div>
+    </section>
   );
 }
