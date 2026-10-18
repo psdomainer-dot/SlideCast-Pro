@@ -211,7 +211,8 @@ function conversion_start($conversion_id, $resolutions, $user_id) {
         }
         
         // Update progress
-        $progress = round((array_search($resolution, $resolutions) + 1) / count($resolutions) * 100);
+        $idx = array_search($resolution, $resolutions);
+        $progress = round((($idx !== false ? $idx : 0) + 1) / count($resolutions) * 100);
         db_query("UPDATE conversions SET progress = ? WHERE id = ?", "ii", [$progress, $conversion_id]);
     }
     
@@ -492,8 +493,8 @@ function cleanup_temp($dir) {
 function log_activity($user_id, $action, $entity_type = null, $entity_id = null, $details = null) {
     db_query(
         "INSERT INTO activity_log (user_id, action, entity_type, entity_id, details, ip_address) VALUES (?, ?, ?, ?, ?, ?)",
-        "isssi" === "isssi" ? "issis" : "issis",
-        [$user_id, $action, $entity_type, $entity_id, $details ? json_encode($details) : null, $_SERVER['REMOTE_ADDR'] ?? '']
+        "ississ",
+        [$user_id, $action, $entity_type ?? '', $entity_id ?? 0, $details ? json_encode($details) : null, $_SERVER['REMOTE_ADDR'] ?? '']
     );
 }
 ?>
